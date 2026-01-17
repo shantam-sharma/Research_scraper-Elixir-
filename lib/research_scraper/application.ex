@@ -7,7 +7,9 @@ defmodule ResearchScraper.Application do
   def start(_type, _args) do
     children = [
       {Finch, name: ResearchScraperFinch},
-      ResearchScraper.RateLimiter
+      ResearchScraper.RateLimiter,
+      ResearchScraper.Fetcher,
+      ResearchScraper.Scheduler
       # Core infrastructure (to be enabled incrementally)
       # ResearchScraper.RateLimiter,
       # ResearchScraper.Scheduler,
