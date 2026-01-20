@@ -50,10 +50,23 @@ defmodule ResearchScraper.Scheduler do
     Logger.info("Scheduler : dispatching fetch for #{query}")
 
     Task.start(fn ->
-      result = Worker.fetch(worker, url)
-      Logger.info("Scheduler: fetch result for #{query}: #{inspect(result)}")
-    end)
+      case Worker.fetch(worker, url) do
+        {:ok, %{status: 200, body: xml}} ->
+          papers =
+            ResearchScraper.Parser.ArxivParser.parse(xml)
 
+          Logger.info(
+            "Scheduler: parsed #{length(papers)} papers for #{query}"
+          )
+
+          Logger.debug(inspect(papers))
+
+        other ->
+          Logger.error(
+            "Scheduler: fetch failed for #{query}: #{inspect(other)}"
+          )
+      end
+    end)
     {:noreply, %{state | queries: rest}}
   end
 
