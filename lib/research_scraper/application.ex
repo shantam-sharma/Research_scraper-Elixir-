@@ -9,6 +9,7 @@ defmodule ResearchScraper.Application do
       {Finch, name: ResearchScraperFinch},
       ResearchScraper.RateLimiter,
       ResearchScraper.Fetcher,
+      ResearchScraper.Storage,
       ResearchScraper.Scheduler
       # Core infrastructure (to be enabled incrementally)
       # ResearchScraper.RateLimiter,

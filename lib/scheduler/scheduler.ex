@@ -54,13 +54,10 @@ defmodule ResearchScraper.Scheduler do
         {:ok, %{status: 200, body: xml}} ->
           papers =
             ResearchScraper.Parser.ArxivParser.parse(xml)
-
+          Enum.each(papers, &ResearchScraper.Storage.insert/1)
           Logger.info(
-            "Scheduler: parsed #{length(papers)} papers for #{query}"
+            "Scheduler: stored #{length(papers)} papers for #{query}"
           )
-
-          Logger.debug(inspect(papers))
-
         other ->
           Logger.error(
             "Scheduler: fetch failed for #{query}: #{inspect(other)}"
