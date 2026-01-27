@@ -27,9 +27,12 @@ defmodule ResearchScraper.Scheduler do
   @impl true
 
   def init(:ok) do
+    interval = Application.fetch_env!(:research_scraper, :scheduler_interval_ms)
     state = %{
-      queries: default_queries()
+      queries: default_queries(),
+      interval: interval
     }
+    schedule_tick(interval)
     {:ok, state}
   end
 
@@ -65,6 +68,21 @@ defmodule ResearchScraper.Scheduler do
       end
     end)
     {:noreply, %{state | queries: rest}}
+  end
+
+  @impl true
+  def handle_info(:tick, state) do
+    # Trigger one fetch cycle
+    fetch_next()
+
+    # Schedule the next tick
+    schedule_tick(state.interval)
+
+    {:noreply, state}
+  end
+
+  defp schedule_tick(interval) do
+    Process.send_after(self(), :tick, interval)
   end
 
   ## Internal Helpers

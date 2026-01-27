@@ -30,6 +30,16 @@ defmodule ResearchScraper.Storage do
     GenServer.call(__MODULE__, :all)
   end
 
+  @doc """
+  Clears all stored papers.
+
+  Intended for test support.
+  """
+  def clear do
+    GenServer.call(__MODULE__, :clear)
+  end
+
+
   ## GenServer Callbacks
 
   @impl true
@@ -54,6 +64,13 @@ defmodule ResearchScraper.Storage do
     papers =
       :ets.tab2list(table)
       |> Enum.map(fn {_id, paper} -> paper end)
+
     {:reply, papers, table}
+  end
+
+  @impl true
+  def handle_call(:clear, _from, table) do
+    :ets.delete_all_objects(table)
+    {:reply, :ok, table}
   end
 end
