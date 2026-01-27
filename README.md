@@ -29,6 +29,16 @@ _________________________________________________________________________
 - Erlang/OTP >= 26
 _________________________________________________________________________
 
+## CLI Usage
+
+Trigger one fetch cycle:
+
+mix scraper.fetch
+mix scraper.list
+mix scraper.clear
+
+_________________________________________________________________________
+
 ## Planned Next Steps
 
 - Add retry and exponential backoff to fetcher workers
