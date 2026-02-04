@@ -29,16 +29,23 @@ defmodule ResearchScraper.Parser.ArxivParser do
   ## Internal helpers
 
   defp normalize(entry) do
+    id = String.trim(entry.id)
+
     %{
       source: "arXiv",
-      id: String.trim(entry.id),
+      id: id,
+      pdf_url: pdf_url_from_id(id),
       title: clean(entry.title),
       abstract: clean(entry.summary),
       authors: Enum.map(entry.authors, &String.trim/1),
       published: entry.published
     }
   end
-
+  defp pdf_url_from_id(id) do
+    id
+    |> String.replace("/abs/", "/pdf/")
+    |> Kernel.<>(".pdf")
+  end
   defp clean(text) do
     text
     |> String.replace(~r/\s+/, " ")
