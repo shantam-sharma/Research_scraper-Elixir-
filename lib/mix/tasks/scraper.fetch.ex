@@ -4,7 +4,7 @@ defmodule Mix.Tasks.Scraper.Fetch do
   @shortdoc "Trigger one research paper fetch cycle"
 
   @moduledoc """
-  Triggers the scheduler to fetch the next batch of research papers.
+  Fetches one batch of research papers and stores them in the database.
 
   Usage:
     mix scraper.fetch
@@ -21,7 +21,16 @@ defmodule Mix.Tasks.Scraper.Fetch do
     case ResearchScraper.Fetcher.Worker.fetch(worker, url) do
       {:ok, %{status: 200, body: xml}} ->
         papers = ResearchScraper.Parser.ArxivParser.parse(xml)
-        Enum.each(papers, &ResearchScraper.Storage.insert/1)
+
+        Enum.each(papers, fn paper ->
+          ResearchScraper.Storage.insert(%{
+            arxiv_id: paper.id,
+            title: paper.title,
+            authors: Enum.join(paper.authors, ", "),
+            published: paper.published,
+            pdf_url: paper.pdf_url
+          })
+        end)
 
         IO.puts("Fetched #{length(papers)} papers.")
 

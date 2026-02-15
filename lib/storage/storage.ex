@@ -1,76 +1,29 @@
 defmodule ResearchScraper.Storage do
   @moduledoc """
-  Stores normalized research papers using ETS.
-
-  This module owns the ETS table and provides
-  a controlled interface for persistence.
+  Database-backed storage using Ecto.
   """
-  use GenServer
 
-  @table :papers
+  alias ResearchScraper.{Repo, Paper}
 
-  ## Public API
-
-  def start_link(_opts \\ []) do
-    GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
+  def insert(attrs) do
+    %Paper{}
+    |> Paper.changeset(attrs)
+    |> Repo.insert(
+      on_conflict: :nothing,
+      conflict_target: :arxiv_id
+    )
   end
 
-  @doc """
-  Inserts a paper into storsge
-  papers are deduplicated by `id`.
-  """
-  def insert(%{id: id} = paper) do
-    GenServer.cast(__MODULE__, {:insert, id, paper})
-  end
-
-  @doc """
-  Returns all stored papers.
-  """
   def all do
-    GenServer.call(__MODULE__, :all)
+    Repo.all(Paper)
   end
 
-  @doc """
-  Clears all stored papers.
+  def get_by_index(index) do
+    Repo.all(Paper)
+    |> Enum.at(index - 1)
+  end
 
-  Intended for test support.
-  """
   def clear do
-    GenServer.call(__MODULE__, :clear)
-  end
-
-
-  ## GenServer Callbacks
-
-  @impl true
-
-  def init(:ok) do
-    table =
-      :ets.new(
-        @table,
-        [:set, :named_table, :public, read_concurrency: true]
-      )
-    {:ok, table}
-  end
-
-  @impl true
-  def handle_cast({:insert, id, paper}, table) do
-    :ets.insert(table, {id, paper})
-    {:noreply, table}
-  end
-
-  @impl true
-  def handle_call(:all, _from, table) do
-    papers =
-      :ets.tab2list(table)
-      |> Enum.map(fn {_id, paper} -> paper end)
-
-    {:reply, papers, table}
-  end
-
-  @impl true
-  def handle_call(:clear, _from, table) do
-    :ets.delete_all_objects(table)
-    {:reply, :ok, table}
+    Repo.delete_all(Paper)
   end
 end

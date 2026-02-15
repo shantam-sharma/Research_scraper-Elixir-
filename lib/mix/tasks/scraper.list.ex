@@ -3,13 +3,6 @@ defmodule Mix.Tasks.Scraper.List do
 
   @shortdoc "List stored research papers"
 
-  @moduledoc """
-  Lists all stored research papers.
-
-  Usage:
-    mix scraper.list
-  """
-
   def run(_args) do
     Mix.Task.run("app.start")
 
@@ -19,10 +12,10 @@ defmodule Mix.Tasks.Scraper.List do
       IO.puts("No papers stored.")
     else
       Enum.with_index(papers, 1)
-      |> Enum.each(fn {paper, idx} ->
+      |> Enum.each(fn {paper, index} ->
         IO.puts("""
-        [#{idx}] #{paper.title}
-            Authors: #{Enum.join(paper.authors, ", ")}
+        [#{index}] #{paper.title}
+            Authors: #{paper.authors}
             Published: #{paper.published}
         """)
       end)
