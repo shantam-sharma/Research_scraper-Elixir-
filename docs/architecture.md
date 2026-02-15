@@ -6,6 +6,9 @@ for collecting research paper metadata from public academic
 sources. The architecture follows Elixir/OTP principles:
 process isolation, message passing, and fault tolerance.
 
+The system now includes persistent storage (SQLite via Ecto),
+CLI interaction, and PDF ingestion.
+
 ## Core Components
 
 ### Scheduler
@@ -25,6 +28,15 @@ a single HTTP request and returns the response asynchronously.
 - Each worker performs one HTTP request
 - Enforces global rate limiting before fetching
 - Isolates failures at the worker level
+
+### PDF Fetcher
+Dedicated worker responsible for downloading PDF files.
+
+- Separate worker from metadata fetcher
+- Handles HTTP redirects
+- Implements retry with exponential backoff
+- Writes PDF files to disk
+- Marks papers as downloaded in database
 
 ### Rate Limiter
 A GenServer responsible for enforcing request limits per
@@ -52,6 +64,15 @@ is isolated from fetching and parsing concerns.
 - Deduplicates papers by ID
 - Provides read and clear interfaces
 - Used as in-memory persistence
+
+### CLI Layer
+Mix tasks expose user interaction:
+
+- scraper.search — search by topic
+- scraper.fetch — scheduled category fetch
+- scraper.list — list stored papers
+- scraper.download — download paper by index
+- scraper.clear — wipe database
 
 ## Supervision Strategy
 - Core services are permanent
