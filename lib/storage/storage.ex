@@ -23,6 +23,19 @@ defmodule ResearchScraper.Storage do
     |> Enum.at(index - 1)
   end
 
+  def mark_downloaded(arxiv_id) do
+    case Repo.get_by(Paper, arxiv_id: arxiv_id) do
+      nil ->
+        {:error, :not_found}
+
+      paper ->
+        paper
+        |> Ecto.Changeset.change(downloaded: true)
+        |> Repo.update()
+    end
+  end
+
+
   def clear do
     Repo.delete_all(Paper)
   end
