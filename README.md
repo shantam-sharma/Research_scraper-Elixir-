@@ -38,50 +38,50 @@ _________________________________________________________________________
 ## Setup
 
 Install dependencies:
-    mix deps.get
+- mix deps.get
 Create and migrate database:
-    mix ecto.create
-    mix ecto.migrate
+- mix ecto.create
+- mix ecto.migrate
 _________________________________________________________________________
 
 ## CLI Usage
 
 Search by topic:
-    mix scraper.search "transformers"
-    mix scraper.search "neural network" 10
+- mix scraper.search "transformers"
+- mix scraper.search "neural network" 10
 
 Fetch predefined category:
-    mix scraper.fetch
+- mix scraper.fetch
 
 List stored papers:
-    mix scraper.list
+- mix scraper.list
 
 Download paper by index:
-    mix scraper.download 1
+- mix scraper.download 1
 
 Clear database:
-    mix scraper.clear
+- mix scraper.clear
 _________________________________________________________________________
 ## Correct Ways to Run Tasks
 
 From PowerShell / CMD:
 
 Use Mix CLI:
-    mix scraper.search "Neural Networks"
-    mix scraper.fetch
-    mix scraper.list
-    mix scraper.download 1
-    mix scraper.clear
+-    mix scraper.search "Neural Networks"
+-   mix scraper.fetch
+-   mix scraper.list
+-   mix scraper.download 1
+-   mix scraper.clear
 
 From IEx:
-    Start IEx:
-    iex -S mix
-    Then:
-    Mix.Tasks.Scraper.Search.run(["Neural Networks"])
-    Mix.Tasks.Scraper.Fetch.run([])
-    Mix.Tasks.Scraper.List.run([])
-    Mix.Tasks.Scraper.Download.run(["1"])
-    Mix.Tasks.Scraper.Clear.run([])
+-    Start IEx:
+-   iex -S mix
+-   Then:
+-   Mix.Tasks.Scraper.Search.run(["Neural Networks"])
+-   Mix.Tasks.Scraper.Fetch.run([])
+-   Mix.Tasks.Scraper.List.run([])
+-   Mix.Tasks.Scraper.Download.run(["1"])
+-   Mix.Tasks.Scraper.Clear.run([])
 _________________________________________________________________________
 
 ## Architecture Summary
