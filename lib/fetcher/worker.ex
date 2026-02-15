@@ -72,9 +72,21 @@ defmodule ResearchScraper.Fetcher.Worker do
   ## HTTP
 
   defp do_fetch(url) do
-    request = Finch.build(:get, url)
+    request =
+      Finch.build(
+        :get,
+        url,
+        [
+          {"user-agent", "ResearchScraper/1.0 (contact: your_email@example.com)"},
+          {"accept", "application/atom+xml"}
+        ]
+      )
 
-    case Finch.request(request, ResearchScraperFinch) do
+    case Finch.request(
+           request,
+           ResearchScraperFinch,
+           receive_timeout: 30_000
+         ) do
       {:ok, %Finch.Response{status: status, body: body}} ->
         {:ok, %{status: status, body: body}}
 
@@ -82,6 +94,7 @@ defmodule ResearchScraper.Fetcher.Worker do
         {:error, reason}
     end
   end
+
 
   ## Helpers
 

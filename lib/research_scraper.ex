@@ -1,18 +1,37 @@
 defmodule ResearchScraper do
   @moduledoc """
-  Documentation for `ResearchScraper`.
+  Core high-level API for research search and ingestion.
   """
 
-  @doc """
-  Hello world.
+  alias ResearchScraper.Fetcher
+  alias ResearchScraper.Fetcher.Worker
+  alias ResearchScraper.Parser.ArxivParser
+  alias ResearchScraper.Storage
 
-  ## Examples
+  @default_limit 5
 
-      iex> ResearchScraper.hello()
-      :world
+  def search(topic, limit \\ @default_limit) when is_binary(topic) do
+    query = build_query(topic, limit)
 
-  """
-  def hello do
-    :world
+    {:ok, worker} = Fetcher.start_worker()
+
+    case Worker.fetch(worker, query) do
+      {:ok, %{status: 200, body: xml}} ->
+        papers = ArxivParser.parse(xml)
+
+        Enum.each(papers, &Storage.insert/1)
+
+        {:ok, papers}
+
+      other ->
+        {:error, other}
+    end
+  end
+
+  defp build_query(topic, limit) do
+    encoded =
+      URI.encode(topic)
+
+    "https://export.arxiv.org/api/query?search_query=all:#{encoded}&max_results=#{limit}"
   end
 end
