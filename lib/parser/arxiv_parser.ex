@@ -21,7 +21,8 @@ defmodule ResearchScraper.Parser.ArxivParser do
       title: ~x"./title/text()"s,
       summary: ~x"./summary/text()"s,
       published: ~x"./published/text()"s,
-      authors: ~x"./author/name/text()"ls
+      authors: ~x"./author/name/text()"ls,
+      pdf_url: ~x"./link[@title='pdf']/@href"s
     )
     |> Enum.map(&normalize/1)
   end
@@ -35,7 +36,8 @@ defmodule ResearchScraper.Parser.ArxivParser do
       title: clean(entry.title),
       abstract: clean(entry.summary),
       authors: Enum.map(entry.authors, &String.trim/1),
-      published: entry.published
+      published: entry.published,
+      pdf_url: entry.pdf_url
     }
   end
 

@@ -47,3 +47,26 @@ _________________________________________________________________________
 - Add PDF fetching and metadata extraction
 - Add search and query interface
 - Add telemetry and metrics
+
+
+Correct Ways to Run Tasks
+From PowerShell / CMD:
+
+Use Mix CLI:
+
+mix scraper.fetch
+mix scraper.list
+mix scraper.download 1
+
+From IEx:
+
+Start IEx:
+
+iex -S mix
+
+
+Then:
+
+Mix.Tasks.Scraper.Fetch.run([])
+Mix.Tasks.Scraper.List.run([])
+Mix.Tasks.Scraper.Download.run(["1"])
